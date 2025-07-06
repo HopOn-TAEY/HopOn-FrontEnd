@@ -1,6 +1,23 @@
+import { useForm, SubmitHandler } from "react-hook-form";
 import "./../App.css";
 
+interface LoginFormInputs {
+  email: string;
+  senha: string;
+  lembrar: boolean;
+}
+
 function Login() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormInputs>();
+
+  const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
+    console.log("Dados enviados:", data);
+  };
+
   return (
     <div className="w-screen h-screen bg-folha flex justify-center p-6 font-poppins">
       <div className="m-auto bg-white rounded-md mt-[3%] p-[1.5%] w-[35%]">
@@ -10,7 +27,7 @@ function Login() {
         <h5 className="mb-[5%] text-center">
           Faça login para encontrar ou oferecer viagens
         </h5>
-        <form action="X" method="post">
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="w-[80%] m-auto mb-[2%] mt-5">
             <label htmlFor="email" className="text-sm font-semibold">
               E-mail
@@ -20,8 +37,17 @@ function Login() {
               type="email"
               className="w-full p-2 border border-gray-300 rounded-md"
               placeholder="Digite seu e-mail..."
-              required
+              {...register("email", {
+                required: "Email é obrigatório",
+                pattern: {
+                  value: /^\S+@\S+$/i,
+                  message: "Formato de email inválido",
+                },
+              })}
             />
+            {errors.email && (
+              <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>
+            )}
           </div>
 
           <div className="w-[80%] m-auto mb-[2%]">
@@ -33,13 +59,28 @@ function Login() {
               type="password"
               className="w-full p-2 border border-gray-300 rounded-md"
               placeholder="Digite sua senha..."
-              required
+              {...register("senha", {
+                required: "Senha é obrigatória",
+                minLength: {
+                  value: 6,
+                  message: "A senha deve ter ao menos 6 caracteres",
+                },
+              })}
             />
+            {errors.senha && (
+              <p className="text-red-600 text-sm mt-1">{errors.senha.message}</p>
+            )}
           </div>
+
           <div className="w-[80%] m-auto mb-5 justify-between flex items-center">
             <div className="w-[80%] m-auto mb-5 text-left flex items-center">
-              <input type="checkbox" id="termos" className="mr-2" required />
-              <label htmlFor="termos" className="text-sm">
+              <input
+                type="checkbox"
+                id="lembrar"
+                className="mr-2"
+                {...register("lembrar")}
+              />
+              <label htmlFor="lembrar" className="text-sm">
                 Lembrar de mim
               </label>
             </div>
@@ -63,7 +104,7 @@ function Login() {
         <div className="text-center mb-5">
           <h5 className="text-sm">
             Não tem uma conta?{" "}
-            <a href="#" className="text-folha hover:underline">
+            <a href="/" className="text-folha hover:underline">
               Cadastre-se
             </a>
           </h5>

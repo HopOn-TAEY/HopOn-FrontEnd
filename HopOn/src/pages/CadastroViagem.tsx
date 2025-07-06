@@ -1,16 +1,38 @@
+import { useForm, SubmitHandler } from "react-hook-form";
 import "./../App.css";
 
+interface ViagemFormInputs {
+  pontoPartida: string;
+  destino: string;
+  tipoveiculo: string;
+  preco: string;
+  vagas: string;
+  data: string;
+  hora: string;
+  observacoes?: string;
+}
+
 function CadastrarViagem() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ViagemFormInputs>();
+
+  const onSubmit: SubmitHandler<ViagemFormInputs> = (data) => {
+    console.log("Dados da viagem cadastrada:", data);
+  };
+
   return (
-    <div className="w-screen h-screen bg-folha flex justify-center p-6 font-poppins">
-      <div className="m-auto bg-white rounded-md mt-[3%] p-[1.5%] w-[45%]">
+    <div className="bg-folha flex justify-center p-6 font-poppins">
+      <div className="m-auto bg-white rounded-md p-[1.5%] w-[45%]">
         <h1 className="text-center text-4xl font-bold pt-[1%] mb-[2%] mt-5">
           Cadastre sua viagem
         </h1>
         <h5 className="mb-[2%] text-center">
           Compartilhe sua rota com outros viajantes
         </h5>
-        <form action="X" method="post">
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="w-[80%] m-auto mb-[2%] mt-5">
             <label htmlFor="pontoPartida" className="text-sm font-semibold">
               Ponto de partida
@@ -20,8 +42,11 @@ function CadastrarViagem() {
               type="text"
               className="w-full p-2 border border-gray-300 rounded-md"
               placeholder="Digite o ponto de partida..."
-              required
+              {...register("pontoPartida", { required: "Campo obrigatório" })}
             />
+            {errors.pontoPartida && (
+              <p className="text-red-600 text-sm mt-1">{errors.pontoPartida.message}</p>
+            )}
           </div>
 
           <div className="w-[80%] m-auto mb-[2%]">
@@ -33,19 +58,22 @@ function CadastrarViagem() {
               type="text"
               className="w-full p-2 border border-gray-300 rounded-md"
               placeholder="Digite o seu destino final..."
-              required
+              {...register("destino", { required: "Campo obrigatório" })}
             />
+            {errors.destino && (
+              <p className="text-red-600 text-sm mt-1">{errors.destino.message}</p>
+            )}
           </div>
 
           <div className="w-[80%] m-auto mb-[2%] flex justify-between items-center gap-x-6">
-            <div className="w-[80%] m-auto mb-[2%]  ">
+            <div className="w-[40%] m-auto">
               <label htmlFor="tipoveiculo" className="text-sm font-semibold">
                 Tipo de veículo
               </label>
               <select
                 id="tipoveiculo"
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none"
-                required
+                {...register("tipoveiculo", { required: "Campo obrigatório" })}
               >
                 <option value="">...</option>
                 <option value="carro">Carro</option>
@@ -53,16 +81,36 @@ function CadastrarViagem() {
                 <option value="onibus">Ônibus</option>
                 <option value="bicicleta">Bicicleta</option>
               </select>
+              {errors.tipoveiculo && (
+                <p className="text-red-600 text-sm mt-1">{errors.tipoveiculo.message}</p>
+              )}
             </div>
 
-            <div className="w-[20%] m-auto mb-[2%]">
+            <div className="w-[40%] m-auto">
+              <label htmlFor="preco" className="text-sm font-semibold">
+                Preço
+              </label>
+              <input
+                id="preco"
+                type="number"
+                step="0.01"
+                className="w-full p-2 border border-gray-300 rounded-md"
+                placeholder="Digite o preço..."
+                {...register("preco", { required: "Campo obrigatório" })}
+              />
+              {errors.preco && (
+                <p className="text-red-600 text-sm mt-1">{errors.preco.message}</p>
+              )}
+            </div>
+
+            <div className="w-[20%]">
               <label htmlFor="vagas" className="text-sm font-semibold">
                 Vagas
               </label>
               <select
                 id="vagas"
                 className="w-full p-2 border border-gray-300 rounded-md"
-                required
+                {...register("vagas", { required: "Campo obrigatório" })}
               >
                 <option value="">...</option>
                 <option value="1">1</option>
@@ -71,31 +119,42 @@ function CadastrarViagem() {
                 <option value="4">4</option>
                 <option value="5">5</option>
               </select>
+              {errors.vagas && (
+                <p className="text-red-600 text-sm mt-1">{errors.vagas.message}</p>
+              )}
             </div>
           </div>
 
-          <div className="w-[80%] m-auto mb-[2%]">
-            <label htmlFor="data" className="text-sm font-semibold">
-              Data da Viagem
-            </label>
-            <input
-              id="data"
-              type="date"
-              className="w-full p-2 border border-gray-300 rounded-md"
-              required
-            />
-          </div>
+          <div className="w-[80%] m-auto mb-[2%] flex justify-between items-center gap-x-6">
+            <div className="w-full">
+              <label htmlFor="data" className="text-sm font-semibold">
+                Data da Viagem
+              </label>
+              <input
+                id="data"
+                type="date"
+                className="w-full p-2 border border-gray-300 rounded-md"
+                {...register("data", { required: "Campo obrigatório" })}
+              />
+              {errors.data && (
+                <p className="text-red-600 text-sm mt-1">{errors.data.message}</p>
+              )}
+            </div>
 
-          <div className="w-[80%] m-auto mb-[2%]">
-            <label htmlFor="hora" className="text-sm font-semibold">
-              Horário de partida
-            </label>
-            <input
-              id="hora"
-              type="time"
-              className="w-full p-2 border border-gray-300 rounded-md"
-              required
-            />
+            <div className="w-full">
+              <label htmlFor="hora" className="text-sm font-semibold">
+                Horário de partida
+              </label>
+              <input
+                id="hora"
+                type="time"
+                className="w-full p-2 border border-gray-300 rounded-md"
+                {...register("hora", { required: "Campo obrigatório" })}
+              />
+              {errors.hora && (
+                <p className="text-red-600 text-sm mt-1">{errors.hora.message}</p>
+              )}
+            </div>
           </div>
 
           <div className="w-[80%] m-auto mb-[2%]">
@@ -107,6 +166,7 @@ function CadastrarViagem() {
               className="w-full h-10 p-2 border border-gray-300 rounded-md"
               placeholder="Digite suas observações..."
               rows={4}
+              {...register("observacoes")}
             ></textarea>
           </div>
 
@@ -118,7 +178,8 @@ function CadastrarViagem() {
             />
           </div>
         </form>
-        <div className="text-center mb-5">
+
+        <div className="text-center mb-1">
           <a href="#" className="text-sm text-red-800 hover:underline">
             Cancelar
           </a>

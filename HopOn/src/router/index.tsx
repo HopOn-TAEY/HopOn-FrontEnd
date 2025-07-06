@@ -5,8 +5,13 @@ import Login from "../pages/Login";
 import Solicitar from "../pages/Solicitar";
 import CadastrarViagem from "../pages/CadastroViagem";
 import Pesquisar from "../components/Pesquisa";
+import Perfil from "../pages/Perfil";
 
 export const router = createBrowserRouter([
+  {
+    element: <Home />,
+    path: "home",
+  },
   {
     element: <Cadastrar />,
     path: "/",
@@ -24,11 +29,11 @@ export const router = createBrowserRouter([
     path: "cadastrarviagem",
   },
   {
-    element: <Home />,
-    path: "home",
-  },
-  {
     element: <Pesquisar />,
     path: "pesquisa",
   },
+  {
+    element: <Perfil />,
+    path: "perfil",
+  }
 ]);
