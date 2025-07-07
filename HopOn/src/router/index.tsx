@@ -10,11 +10,11 @@ import Perfil from "../pages/Perfil";
 export const router = createBrowserRouter([
   {
     element: <Home />,
-    path: "home",
+    path: "/",
   },
   {
     element: <Cadastrar />,
-    path: "/",
+    path: "cadastrar",
   },
   {
     element: <Login />,
