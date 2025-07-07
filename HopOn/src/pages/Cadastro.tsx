@@ -136,7 +136,11 @@ function Cadastrar() {
               </label>
               <input
                 id="senha"
-                {...register("senha", { required: "Senha é obrigatória" })}
+                {...register("senha", { required: "Senha é obrigatória",                 
+                  minLength: {
+                  value: 4,
+                  message: "A senha deve ter ao menos 4 caracteres",
+                }, })}
                 type="password"
                 className="w-full p-2 border border-gray-300 rounded-md"
                 placeholder="Digite sua senha..."
@@ -156,6 +160,10 @@ function Cadastrar() {
                   required: "Confirmação de senha é obrigatória",
                   validate: (value) =>
                     value === watch("senha") || "As senhas não coincidem",
+                  minLength: {
+                  value: 4,
+                  message: "A senha deve ter ao menos 4 caracteres",
+                },
                 })}
                 type="password"
                 className="w-full p-2 border border-gray-300 rounded-md"

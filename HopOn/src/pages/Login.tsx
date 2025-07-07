@@ -61,10 +61,7 @@ function Login() {
               placeholder="Digite sua senha..."
               {...register("senha", {
                 required: "Senha é obrigatória",
-                minLength: {
-                  value: 6,
-                  message: "A senha deve ter ao menos 6 caracteres",
-                },
+
               })}
             />
             {errors.senha && (
