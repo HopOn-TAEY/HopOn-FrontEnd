@@ -303,11 +303,27 @@ Para acessar as funcionalidades abaixo, o usuário deve ter uma conta e estar lo
 
 ## :neckbeard: Rotas da API REST Utilizadas
 
-| Método HTTP | URL |
-|---|---|
-| `GET` | `/api/entidade1/` |
-| `POST` | `/api/entidade2` |
-
+| Método HTTP | URL                                      |
+|-------------|-------------------------------------------|
+| POST        | /login                                    |
+| POST        | /criar-motorista                          |
+| POST        | /criar-passageiro                         |
+| GET         | /corridas                                 |
+| GET         | /corridas/:id                             |
+| GET         | /motoristas                               |
+| GET         | /perfil/:id                               |
+| GET         | /me                                       |
+| GET         | /veiculos                                 |
+| POST        | /criar-corrida                            |
+| DELETE      | /deletar-corrida/:id                      |
+| POST        | /adicionar-veiculo                        |
+| PUT         | /editar-veiculo                           |
+| DELETE      | /deletar-usuario/:id                      |
+| PUT         | /atualizar-motorista/:id                  |
+| POST        | /solicitar-corrida-privada                |
+| POST        | /aceitar-proposta-corrida-privada         |
+| GET         | /corridas-privadas                        |
+| PUT         | /atualizar-vagas-corrida-privada          |
 
 
 
