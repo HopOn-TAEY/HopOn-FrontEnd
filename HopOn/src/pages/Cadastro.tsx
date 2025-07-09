@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import InputMask from "react-input-mask";
+import { registerPassageiro, registerMotorista } from "../api/auth";
+import { useAuth } from "../contexts/AuthContext";
 import "./../App.css";
 
 type TipoUsuario = "passageiro" | "motorista";
@@ -19,6 +22,11 @@ interface FormValues {
 }
 
 function Cadastrar() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { login: loginContext } = useAuth();
+
   const {
     register,
     control,
@@ -29,9 +37,47 @@ function Cadastrar() {
 
   const tipoUsuario = watch("tipoUsuario");
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log("Dados do formulário:", data);
-    // envio para API aqui
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      let result;
+      if (data.tipoUsuario === "passageiro") {
+        result = await registerPassageiro({
+          nome: data.nome,
+          email: data.email,
+          nasc: data.nasc,
+          telefone: data.telefone,
+          senha: data.senha,
+          tipoUsuario: "passageiro",
+        });
+      } else {
+        result = await registerMotorista({
+          nome: data.nome,
+          email: data.email,
+          nasc: data.nasc,
+          telefone: data.telefone,
+          senha: data.senha,
+          tipoUsuario: "motorista",
+          cnh: data.cnh || "",
+          corridasPrivadas: data.corridasPrivadas || false,
+        });
+      }
+      
+      // Atualizar o contexto com os dados do usuário
+      loginContext(result.user);
+      
+      console.log('Cadastro bem-sucedido, redirecionando...');
+      console.log('Result:', result);
+      
+      // Redirecionar para a página de debug para testar
+      navigate('/debug');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Erro ao fazer cadastro');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -41,6 +87,12 @@ function Cadastrar() {
           Crie sua conta
         </h1>
         <h5 className="mb-[2%] text-center">Encontre viagens de forma prática</h5>
+
+        {error && (
+          <div className="w-[80%] m-auto mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
           {/* Nome e E-mail */}
@@ -281,8 +333,9 @@ function Cadastrar() {
           <div className="justify-center flex items-center mt-[3%]">
             <input
               type="submit"
-              value={"Cadastrar"}
-              className="w-[30%] bg-folha place-content-center text-white p-2 rounded-md cursor-pointer hover:bg-green-700 transition-colors duration-300"
+              value={isLoading ? "Cadastrando..." : "Cadastrar"}
+              disabled={isLoading}
+              className="w-[30%] bg-folha place-content-center text-white p-2 rounded-md cursor-pointer hover:bg-green-700 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
         </form>

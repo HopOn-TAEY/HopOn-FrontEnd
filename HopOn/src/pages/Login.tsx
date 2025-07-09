@@ -1,4 +1,8 @@
+import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { login } from "../api/auth";
+import { useAuth } from "../contexts/AuthContext";
 import "./../App.css";
 
 interface LoginFormInputs {
@@ -8,14 +12,37 @@ interface LoginFormInputs {
 }
 
 function Login() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { login: loginContext } = useAuth();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormInputs>();
 
-  const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
-    console.log("Dados enviados:", data);
+  const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const result = await login({
+        email: data.email,
+        senha: data.senha,
+      });
+      
+      // Atualizar o contexto com os dados do usuário
+      loginContext(result.user);
+      
+      // Redirecionar para a página inicial após login bem-sucedido
+      navigate('/home');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Erro ao fazer login');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -27,6 +54,13 @@ function Login() {
         <h5 className="mb-[5%] text-center">
           Faça login para encontrar ou oferecer viagens
         </h5>
+
+        {error && (
+          <div className="w-[80%] m-auto mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="w-[80%] m-auto mb-[2%] mt-5">
             <label htmlFor="email" className="text-sm font-semibold">
@@ -92,8 +126,9 @@ function Login() {
           <div className="justify-center flex items-center mb-5">
             <input
               type="submit"
-              value={"Entrar"}
-              className="w-[30%] bg-folha place-content-center text-white p-2 rounded-md cursor-pointer hover:bg-green-700 transition-colors duration-300"
+              value={isLoading ? "Entrando..." : "Entrar"}
+              disabled={isLoading}
+              className="w-[30%] bg-folha place-content-center text-white p-2 rounded-md cursor-pointer hover:bg-green-700 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
         </form>

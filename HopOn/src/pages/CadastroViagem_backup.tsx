@@ -38,14 +38,6 @@ function CadastrarViagem() {
       try {
         const veiculosData = await listarVeiculos();
         console.log('Veículos carregados:', veiculosData);
-        console.log('Tipo dos veículos:', typeof veiculosData);
-        console.log('É array?', Array.isArray(veiculosData));
-        
-        if (Array.isArray(veiculosData) && veiculosData.length > 0) {
-          console.log('Primeiro veículo:', veiculosData[0]);
-          console.log('ID do primeiro veículo:', veiculosData[0]?.id);
-        }
-        
         setVeiculos(Array.isArray(veiculosData) ? veiculosData : []);
       } catch (error) {
         console.error('Erro ao carregar veículos:', error);
@@ -71,13 +63,6 @@ function CadastrarViagem() {
       // Combinar data e hora
       const dataHora = new Date(`${data.data}T${data.hora}`);
       
-      // Verificar se o veiculoId é válido
-      if (!data.veiculoId || data.veiculoId.trim() === '') {
-        setError('Selecione um veículo válido');
-        setIsLoading(false);
-        return;
-      }
-
       const corridaData = {
         veiculoId: data.veiculoId,
         origem: data.origem,
@@ -86,12 +71,8 @@ function CadastrarViagem() {
         numeroVagas: parseInt(data.vagas),
         preco: parseFloat(data.preco),
         observacoes: data.observacoes,
-        tipo: "PRIVADA" as "PRIVADA", // Corrige o tipo literal
+        tipo: data.tipo,
       };
-      console.log('Dados enviados para o backend:', corridaData);
-
-      console.log('Veículo selecionado:', data.veiculoId);
-      console.log('Dados da corrida a serem enviados:', corridaData);
 
       const result = await criarCorrida(corridaData);
       console.log('Corrida criada:', result);
@@ -99,7 +80,6 @@ function CadastrarViagem() {
       // Redirecionar para a página inicial
       navigate('/');
     } catch (error) {
-      console.error('Erro detalhado:', error);
       setError(error instanceof Error ? error.message : 'Erro ao criar corrida');
     } finally {
       setIsLoading(false);
@@ -150,9 +130,7 @@ function CadastrarViagem() {
               id="veiculoId"
               className="w-full p-2 border border-gray-300 rounded-md"
               disabled={isLoadingVeiculos}
-              {...register("veiculoId", { 
-                required: "Selecione um veículo"
-              })}
+              {...register("veiculoId", { required: "Selecione um veículo" })}
             >
               <option value="">
                 {isLoadingVeiculos ? "Carregando veículos..." : "Selecione um veículo..."}

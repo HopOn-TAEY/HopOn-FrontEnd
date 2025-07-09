@@ -1,5 +1,6 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import "./../App.css";
+import { solicitarCorridaPrivada } from "../api/corridas";
 
 interface SolicitarFormInputs {
   pontoPartida: string;
@@ -16,11 +17,24 @@ function Solicitar() {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<SolicitarFormInputs>();
 
-  const onSubmit: SubmitHandler<SolicitarFormInputs> = (data) => {
-    console.log("Viagem solicitada:", data);
-    // Aqui você pode enviar os dados para o backend
+  const onSubmit: SubmitHandler<SolicitarFormInputs> = async (data) => {
+    try {
+      await solicitarCorridaPrivada({
+        origem: data.pontoPartida,
+        destino: data.destino,
+        data: data.data,
+        hora: data.hora,
+        vagas: Number(data.vagas),
+        preco: 0, // ou algum valor padrão/campo extra
+      });
+      alert("Solicitação enviada com sucesso!");
+      reset();
+    } catch (error) {
+      alert("Erro ao solicitar corrida privada.");
+    }
   };
 
   return (
@@ -30,7 +44,7 @@ function Solicitar() {
           Solicite sua viagem
         </h1>
         <h5 className="mb-[2%] text-center">
-          Viage com mais privacidade e segurança
+          Viaje com mais privacidade e segurança
         </h5>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="w-[80%] m-auto mb-[2%] mt-5">
