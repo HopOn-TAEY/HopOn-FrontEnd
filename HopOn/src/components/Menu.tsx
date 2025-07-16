@@ -1,8 +1,19 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import "./../App.css";
 
 function Menu() {
   const navigate = useNavigate();
+
+  // Simulação simples de estado de login
+  // Substitua pela sua lógica real de autenticação
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Exemplo: verificar se token existe no localStorage
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
 
   return (
     <div className="font-poppins">
@@ -28,18 +39,29 @@ function Menu() {
 
           {/* Botões */}
           <div className="flex space-x-4">
-            <button
-              onClick={() => navigate("/login")}
-              className="px-4 py-2 text-folha border border-folha rounded hover:bg-folha hover:text-white transition"
-            >
-              Entrar
-            </button>
-            <button
-              onClick={() => navigate("/cadastrar")}
-              className="px-4 py-2 text-white border border-folha bg-folha rounded hover:bg-white hover:text-folha transition"
-            >
-              Cadastrar
-            </button>
+            {!isLoggedIn ? (
+              <>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="px-4 py-2 text-folha border border-folha rounded hover:bg-folha hover:text-white transition"
+                >
+                  Entrar
+                </button>
+                <button
+                  onClick={() => navigate("/cadastrar")}
+                  className="px-4 py-2 text-white border border-folha bg-folha rounded hover:bg-white hover:text-folha transition"
+                >
+                  Cadastrar
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => navigate("/perfil")}
+                className="px-4 py-2 text-white border border-folha bg-folha rounded hover:bg-white hover:text-folha transition"
+              >
+                Perfil
+              </button>
+            )}
           </div>
         </div>
       </nav>
@@ -54,7 +76,7 @@ function Menu() {
             Início
           </button>
           <button
-            onClick={() => window.scrollTo({ top: 1000, behavior: "smooth" })}
+            onClick={() => window.scrollTo({ top: 500, behavior: "smooth" })}
             className="hover:underline"
           >
             Como funciona

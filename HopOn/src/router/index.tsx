@@ -6,9 +6,13 @@ import Solicitar from "../pages/Solicitar";
 import CadastrarViagem from "../pages/CadastroViagem";
 import CadastroVeiculo from "../pages/CadastroVeiculo";
 import Pesquisar from "../components/Pesquisa";
-// import Perfil from "../pages/Perfil";
+import Perfil from "../pages/Perfil";
 import Debug from "../pages/Debug";
 import Reserva from "../pages/Reserva";
+import Avaliacao from "../pages/Avaliacao";
+import Menu from "../components/Menu";
+import HomeLogin from "../pages/HomeLogin";
+import Filtros from "../pages/Filtro";
 
 export const router = createBrowserRouter([
   {
@@ -43,10 +47,10 @@ export const router = createBrowserRouter([
     element: <Pesquisar />,
     path: "pesquisa",
   },
-  // {
-  //   element: <Perfil />,
-  //   path: "perfil",
-  // },
+{
+  element: <Perfil />,
+  path: "perfil",
+},
   {
     element: <Debug />,
     path: "debug",
@@ -54,5 +58,21 @@ export const router = createBrowserRouter([
   {
     element: <Reserva />,
     path: "reserva/:corridaId",
+  },
+  {
+    element: <Avaliacao />,
+    path: "avaliacao",
+  },
+  {
+    element: <Menu />,
+    path: "menu",
+  },
+  {
+    element: <HomeLogin />,
+    path: "home-login",
+  },
+  {
+    element: <Filtros />,
+    path: "filtros",
   }
 ]);

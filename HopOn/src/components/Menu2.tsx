@@ -1,42 +1,26 @@
-import "./../App.css";
+import { FaChevronDown } from "react-icons/fa";
 
-function Menu2() {
+function Menu() {
   return (
-    <div className="font-poppins">
-      {/* Menu superior */}
-      <nav className="bg-white shadow-md p-4">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
-          <div className="text-4xl font-bold text-slate-950">HopOn</div>
+    <div className="w-full bg-white px-6 py-3 flex justify-between items-center">
+      {/* Campo de busca */}
+      <input
+        type="text"
+        placeholder="Pesquisar..."
+        className="bg-white text-gray-700 border border-gray-200 rounded-full px-5 py-2 w-64 shadow-sm focus:outline-none focus:ring-1 focus:ring-folha"
+      />
 
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center gap-6 relative">
-            <a href="#" className="hover:underline">
-              Início
-            </a>
-            <a href="#" className="hover:underline">
-              Sobre
-            </a>
-
-            <a href="#" className="hover:underline">
-              Procurar
-            </a>
-
-            <a href="#" className="hover:underline">
-              Oferecer carona
-            </a>
-          </div>
-
-          <div className="flex space-x-4">
-            <button className="px-4 py-2 text-folha border border-folha rounded hover:bg-folha hover:text-white transition">
-              Entrar
-            </button>
-            <button className="px-4 py-2 text-white border border-folha bg-folha rounded hover:bg-white hover:text-folha transition">
-              Cadastrar
-            </button>
-          </div>
+      {/* Botão de perfil */}
+      <div className="bg-white rounded-full px-4 py-2 flex border border-gray-200 items-center gap-3 shadow cursor-pointer hover:shadow-md transition">
+        <div className="w-6 h-6 rounded-full bg-gray-400" />
+        <div className="text-left text-sm">
+          <p className="text-gray-800 font-medium leading-none">Nome</p>
+          <p className="text-gray-500 text-xs">Motorista</p>
         </div>
-      </nav>
+        <FaChevronDown className="text-gray-500 text-xs" />
+      </div>
     </div>
   );
 }
 
-export default Menu2;
+export default Menu;
