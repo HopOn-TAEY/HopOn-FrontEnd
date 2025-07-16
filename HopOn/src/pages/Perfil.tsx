@@ -1,256 +1,332 @@
-// import React, { useEffect } from "react";
-// import { useForm, SubmitHandler, Controller } from "react-hook-form";
-// import InputMask from "react-input-mask";
-// import "./../App.css";
-// import { useAuth } from "../contexts/AuthContext";
-// import { getPerfil } from "../api/usuarios";
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate, useParams } from "react-router-dom";
+import { getPerfilCompleto, getPerfil, deletarUsuario } from "../api/usuarios";
+import "./../App.css";
 
-// interface PerfilFormData {
-//   nome: string;
-//   email: string;
-//   nascimento: string;
-//   telefone: string;
-//   cpf: string;
-//   cep: string;
-//   tipoUsuario: "passageiro" | "motorista";
-//   cnh?: string;
-// }
+interface UsuarioCompleto {
+  id: string;
+  nome: string;
+  email: string;
+  nasc: string;
+  telefone: string;
+  tipo: 'passageiro' | 'motorista';
+  cnh?: string;
+  corridasPrivadas?: boolean;
+  dataNascimento?: string;
+  dataNasc?: string;
+  perfilMotorista?: {
+    cnh: string;
+    veiculos: { id: string; marca: string; modelo: string; placa: string }[];
+  };
+  perfilPassageiro?: {
+    ultimasReservas: { id: string; status: string; numeroAssentos: number; corrida: { origem: string; destino: string } }[];
+  };
+  criadoEm?: string;
+  atualizadoEm?: string;
+  idade?: number;
+  tempoMembro?: number;
+  estatisticas?: {
+    totalReservas: number;
+    totalAvaliacoesFeitas: number;
+    totalAvaliacoesRecebidas: number;
+  };
+}
 
-// function Perfil() {
-//   const {
-//     register,
-//     control,
-//     handleSubmit,
-//     watch,
-//     setValue,
-//     formState: { errors },
-//   } = useForm<PerfilFormData>();
+function Perfil() {
+  const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const { id } = useParams<{ id?: string }>();
+  const [perfilCompleto, setPerfilCompleto] = useState<UsuarioCompleto | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-//   const { user } = useAuth();
+  // LOGS DE DEPURAÇÃO
+  console.log('perfilCompleto:', perfilCompleto);
+  console.log('user do contexto:', user);
 
-//   useEffect(() => {
-//     const fetchPerfil = async () => {
-//       if (user?.id) {
-//         try {
-//           const perfil = await getPerfil(user.id);
-//           setValue("nome", perfil.nome || "");
-//           setValue("email", perfil.email || "");
-//           setValue("nascimento", perfil.nasc || "");
-//           setValue("telefone", perfil.telefone || "");
-//           setValue("tipoUsuario", perfil.tipoUsuario || "passageiro");
-//           if (perfil.cnh) setValue("cnh", perfil.cnh);
-//           // Se tiver campos cpf/cep no backend, adicione aqui
-//         } catch (e) {
-//           // Trate erro se necessário
-//         }
-//       }
-//     };
-//     fetchPerfil();
-//   }, [user, setValue]);
+  useEffect(() => {
+    const carregarPerfilCompleto = async () => {
+      if (!isAuthenticated || !user) {
+        setIsLoading(false);
+        return;
+      }
+      try {
+        let perfil;
+        if (!id || id === user.id) {
+          perfil = await getPerfilCompleto();
+        } else {
+          perfil = await getPerfil(id);
+        }
+        setPerfilCompleto(perfil);
+      } catch (error) {
+        console.error('Erro ao carregar perfil completo:', error);
+        setError('Erro ao carregar informações completas do perfil.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    carregarPerfilCompleto();
+  }, [isAuthenticated, user, id]);
 
-//   const tipoUsuario = watch("tipoUsuario");
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
-//   const onSubmit: SubmitHandler<PerfilFormData> = (data) => {
-//     console.log("Dados do perfil:", data);
-//   };
+  const handleDeleteProfile = async () => {
+    if (!user) return;
+    if (!window.confirm("Tem certeza que deseja deletar seu perfil? Esta ação não poderá ser desfeita!")) return;
+    try {
+      await deletarUsuario(user.id);
+      alert("Perfil deletado com sucesso!");
+      logout();
+      navigate("/");
+    } catch (error) {
+      alert("Erro ao deletar perfil: " + (error instanceof Error ? error.message : String(error)));
+    }
+  };
 
-//   return (
-//     <div className="bg-folha flex justify-center p-6 font-poppins min-h-screen">
-//       <div className="m-auto bg-white rounded-md p-[1.5%] w-[50%]">
-//         <h1 className="text-center text-4xl font-bold pt-[1%] mb-[2%] mt-10">
-//           Meu Perfil
-//         </h1>
-//         <form onSubmit={handleSubmit(onSubmit)}>
-//           {/* Nome e E-mail */}
-//           <div className="w-[80%] m-auto mb-4 flex justify-between gap-6">
-//             <div className="w-full">
-//               <label className="text-sm font-semibold">Nome</label>
-//               <input
-//                 type="text"
-//                 className="w-full p-2 border border-gray-300 rounded-md"
-//                 placeholder="Seu nome"
-//                 {...register("nome", { required: "Nome obrigatório" })}
-//               />
-//               {errors.nome && (
-//                 <p className="text-red-600 text-sm">{errors.nome.message}</p>
-//               )}
-//             </div>
+  const formatarData = (dataString: string) => {
+    if (!dataString) return '-';
+    const data = new Date(dataString);
+    return data.toLocaleDateString('pt-BR');
+  };
 
-//             <div className="w-full">
-//               <label className="text-sm font-semibold">E-mail</label>
-//               <input
-//                 type="email"
-//                 className="w-full p-2 border border-gray-300 rounded-md"
-//                 placeholder="Seu e-mail"
-//                 {...register("email", { required: "E-mail obrigatório" })}
-//               />
-//               {errors.email && (
-//                 <p className="text-red-600 text-sm">{errors.email.message}</p>
-//               )}
-//             </div>
-//           </div>
+  const formatarTelefone = (telefone: string) => {
+    if (!telefone) return '-';
+    // Remove caracteres não numéricos
+    const numeros = telefone.replace(/\D/g, '');
+    // Formata como (XX) XXXXX-XXXX
+    if (numeros.length === 11) {
+      return `(${numeros.slice(0,2)}) ${numeros.slice(2,7)}-${numeros.slice(7)}`;
+    }
+    return telefone;
+  };
 
-//           {/* Nascimento e Telefone */}
-//           <div className="w-[80%] m-auto mb-4 flex justify-between gap-6">
-//             <div className="w-full">
-//               <label className="text-sm font-semibold">Nascimento</label>
-//               <input
-//                 type="date"
-//                 className="w-full p-2 border border-gray-300 rounded-md"
-//                 {...register("nascimento", { required: "Data obrigatória" })}
-//               />
-//               {errors.nascimento && (
-//                 <p className="text-red-600 text-sm">{errors.nascimento.message}</p>
-//               )}
-//             </div>
+  if (!user && !perfilCompleto) {
+    return (
+      <div className="bg-folha flex justify-center p-6 font-poppins min-h-screen">
+        <div className="m-auto bg-white rounded-md p-[1.5%] w-[50%] text-center">
+          <h1 className="text-center text-4xl font-bold pt-[1%] mb-[2%] mt-5">
+            Usuário não encontrado
+          </h1>
+          <button
+            onClick={() => navigate('/')}
+            className="bg-folha text-white px-4 py-2 rounded hover:bg-green-700"
+          >
+            Voltar ao Início
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-//             <div className="w-full">
-//               <label className="text-sm font-semibold">Telefone</label>
-//               <Controller
-//                 name="telefone"
-//                 control={control}
-//                 rules={{ required: "Telefone obrigatório" }}
-//                 render={({ field }) => (
-//                   <InputMask mask="(99) 99999-9999" {...field}>
-//                     {(inputProps: React.InputHTMLAttributes<HTMLInputElement>) => (
-//                       <input
-//                         {...inputProps}
-//                         type="text"
-//                         placeholder="(XX) XXXXX-XXXX"
-//                         className="w-full p-2 border border-gray-300 rounded-md"
-//                       />
-//                     )}
-//                   </InputMask>
-//                 )}
-//               />
-//               {errors.telefone && (
-//                 <p className="text-red-600 text-sm">{errors.telefone.message}</p>
-//               )}
-//             </div>
-//           </div>
+  if (isLoading) {
+    return (
+      <div className="bg-folha flex justify-center p-6 font-poppins min-h-screen">
+        <div className="flex justify-center items-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white"></div>
+        </div>
+      </div>
+    );
+  }
 
-//           {/* CPF e CEP */}
-//           <div className="w-[80%] m-auto mb-4 flex justify-between gap-6">
-//             <div className="w-full">
-//               <label className="text-sm font-semibold">CPF</label>
-//               <Controller
-//                 name="cpf"
-//                 control={control}
-//                 rules={{ required: "CPF obrigatório" }}
-//                 render={({ field }) => (
-//                   <InputMask mask="999.999.999-99" {...field}>
-//                     {(inputProps: React.InputHTMLAttributes<HTMLInputElement>) => (
-//                       <input
-//                         {...inputProps}
-//                         type="text"
-//                         placeholder="Seu CPF"
-//                         className="w-full p-2 border border-gray-300 rounded-md"
-//                       />
-//                     )}
-//                   </InputMask>
-//                 )}
-//               />
-//               {errors.cpf && (
-//                 <p className="text-red-600 text-sm">{errors.cpf.message}</p>
-//               )}
-//             </div>
+  return (
+    <div className="bg-folha flex justify-center p-6 font-poppins min-h-screen">
+      <div className="m-auto bg-white rounded-md p-[1.5%] w-[60%] max-w-4xl">
+        <h1 className="text-center text-4xl font-bold pt-[1%] mb-[2%] mt-10">
+          Perfil
+        </h1>
+        
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
 
-//             <div className="w-full">
-//               <label className="text-sm font-semibold">CEP</label>
-//               <Controller
-//                 name="cep"
-//                 control={control}
-//                 rules={{ required: "CEP obrigatório" }}
-//                 render={({ field }) => (
-//                   <InputMask mask="99999-999" {...field}>
-//                     {(inputProps: React.InputHTMLAttributes<HTMLInputElement>) => (
-//                       <input
-//                         {...inputProps}
-//                         type="text"
-//                         placeholder="00000-000"
-//                         className="w-full p-2 border border-gray-300 rounded-md"
-//                       />
-//                     )}
-//                   </InputMask>
-//                 )}
-//               />
-//               {errors.cep && (
-//                 <p className="text-red-600 text-sm">{errors.cep.message}</p>
-//               )}
-//             </div>
-//           </div>
+        <div className="w-[90%] m-auto space-y-6">
+          {/* Informações Básicas */}
+          <div className="bg-gray-50 rounded-lg p-6">
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">Informações Pessoais</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Nome Completo</label>
+                <p className="p-3 border border-gray-300 rounded-md bg-white">
+                  {perfilCompleto?.nome || user?.nome}
+                </p>
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-600">E-mail</label>
+                <p className="p-3 border border-gray-300 rounded-md bg-white">
+                  {perfilCompleto?.email || user?.email}
+                </p>
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Data de Nascimento</label>
+                <p className="p-3 border border-gray-300 rounded-md bg-white">
+                  {formatarData(perfilCompleto?.dataNascimento || perfilCompleto?.dataNasc || perfilCompleto?.nasc || '')}
+                </p>
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Telefone</label>
+                <p className="p-3 border border-gray-300 rounded-md bg-white">
+                  {formatarTelefone(perfilCompleto?.telefone || user?.telefone || '')}
+                </p>
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Criado em</label>
+                <p className="p-3 border border-gray-300 rounded-md bg-white">
+                  {formatarData(perfilCompleto?.criadoEm || '')}
+                </p>
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Atualizado em</label>
+                <p className="p-3 border border-gray-300 rounded-md bg-white">
+                  {formatarData(perfilCompleto?.atualizadoEm || '')}
+                </p>
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Idade</label>
+                <p className="p-3 border border-gray-300 rounded-md bg-white">
+                  {perfilCompleto?.idade || '-'}
+                </p>
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Tempo como Membro (dias)</label>
+                <p className="p-3 border border-gray-300 rounded-md bg-white">
+                  {perfilCompleto?.tempoMembro || '-'}
+                </p>
+              </div>
+            </div>
+          </div>
 
-//           {/* Tipo de usuário */}
-//           <div className="w-[80%] m-auto mb-4">
-//             <p className="text-sm font-semibold mb-2">Tipo de usuário</p>
-//             <div className="flex gap-4">
-//               <label className="flex items-center gap-2">
-//                 <input
-//                   type="radio"
-//                   value="passageiro"
-//                   {...register("tipoUsuario", { required: "Campo obrigatório" })}
-//                 />
-//                 Passageiro
-//               </label>
-//               <label className="flex items-center gap-2">
-//                 <input
-//                   type="radio"
-//                   value="motorista"
-//                   {...register("tipoUsuario", { required: "Campo obrigatório" })}
-//                 />
-//                 Motorista
-//               </label>
-//             </div>
-//             {errors.tipoUsuario && (
-//               <p className="text-red-600 text-sm">{errors.tipoUsuario.message}</p>
-//             )}
-//           </div>
+          {/* Estatísticas */}
+          {perfilCompleto?.estatisticas && (
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h2 className="text-2xl font-semibold mb-4 text-gray-800">Estatísticas</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-sm font-semibold text-gray-600">Total de Reservas</label>
+                  <p className="p-3 border border-gray-300 rounded-md bg-white">
+                    {perfilCompleto.estatisticas.totalReservas}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-gray-600">Avaliações Feitas</label>
+                  <p className="p-3 border border-gray-300 rounded-md bg-white">
+                    {perfilCompleto.estatisticas.totalAvaliacoesFeitas}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-gray-600">Avaliações Recebidas</label>
+                  <p className="p-3 border border-gray-300 rounded-md bg-white">
+                    {perfilCompleto.estatisticas.totalAvaliacoesRecebidas}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
-//           {/* CNH */}
-//           {tipoUsuario === "motorista" && (
-//             <div className="w-[80%] m-auto mb-4">
-//               <label className="text-sm font-semibold">CNH</label>
-//               <Controller
-//                 name="cnh"
-//                 control={control}
-//                 rules={{
-//                   required: "CNH obrigatória para motoristas",
-//                   validate: (value) =>
-//                     tipoUsuario === "motorista" && !value
-//                       ? "CNH obrigatória para motoristas"
-//                       : true,
-//                 }}
-//                 render={({ field }) => (
-//                   <InputMask mask="99999999999" {...field}>
-//                     {(inputProps: React.InputHTMLAttributes<HTMLInputElement>) => (
-//                       <input
-//                         {...inputProps}
-//                         type="text"
-//                         placeholder="Digite sua CNH"
-//                         className="w-full p-2 border border-gray-300 rounded-md"
-//                       />
-//                     )}
-//                   </InputMask>
-//                 )}
-//               />
-//               {errors.cnh && (
-//                 <p className="text-red-600 text-sm">{errors.cnh.message}</p>
-//               )}
-//             </div>
-//           )}
+          {/* Tipo de Usuário */}
+          <div className="bg-gray-50 rounded-lg p-6">
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">Tipo de Conta</h2>
+            <div className="flex items-center">
+              <span className={`px-4 py-2 rounded-full text-white font-semibold ${
+                perfilCompleto?.tipo?.toLowerCase() === 'motorista' ? 'bg-blue-500' : 'bg-green-500'
+              }`}>
+                {perfilCompleto?.tipo?.toLowerCase() === 'motorista' ? 'Motorista' : 'Passageiro'}
+              </span>
+            </div>
+          </div>
 
-//           {/* Botão */}
-//           <div className="justify-center flex items-center mb-5 mt-6">
-//             <input
-//               type="submit"
-//               value="Salvar"
-//               className="w-[30%] bg-folha text-white p-2 rounded-md cursor-pointer hover:bg-green-700 transition-colors duration-300"
-//             />
-//           </div>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// }
+          {/* Informações Específicas do Motorista */}
+          {perfilCompleto?.tipo?.toLowerCase() === 'motorista' && perfilCompleto.perfilMotorista && (
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h2 className="text-2xl font-semibold mb-4 text-gray-800">Informações de Motorista</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-semibold text-gray-600">CNH</label>
+                  <p className="p-3 border border-gray-300 rounded-md bg-white">
+                    {perfilCompleto.perfilMotorista.cnh || 'Não informada'}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-gray-600">Total de Veículos</label>
+                  <p className="p-3 border border-gray-300 rounded-md bg-white">
+                    {perfilCompleto.perfilMotorista.veiculos ? perfilCompleto.perfilMotorista.veiculos.length : 0}
+                  </p>
+                </div>
+              </div>
+              {/* Exemplo de exibição de veículos */}
+              {perfilCompleto.perfilMotorista.veiculos && perfilCompleto.perfilMotorista.veiculos.length > 0 && (
+                <div className="mt-4">
+                  <h3 className="text-lg font-semibold mb-2">Veículos</h3>
+                  <ul>
+                    {perfilCompleto.perfilMotorista.veiculos.map((v: any) => (
+                      <li key={v.id} className="mb-1">{v.marca} {v.modelo} - Placa: {v.placa}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
 
-// export default Perfil;
+          {/* Informações Específicas do Passageiro */}
+          {perfilCompleto?.tipo?.toLowerCase() === 'passageiro' && perfilCompleto.perfilPassageiro && (
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h2 className="text-2xl font-semibold mb-4 text-gray-800">Reservas Recentes</h2>
+              {perfilCompleto.perfilPassageiro.ultimasReservas && perfilCompleto.perfilPassageiro.ultimasReservas.length > 0 ? (
+                <ul>
+                  {perfilCompleto.perfilPassageiro.ultimasReservas.map((reserva: any) => (
+                    <li key={reserva.id} className="mb-2">
+                      <strong>Status:</strong> {reserva.status} | <strong>Assentos:</strong> {reserva.numeroAssentos} | <strong>Origem:</strong> {reserva.corrida.origem} | <strong>Destino:</strong> {reserva.corrida.destino}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Nenhuma reserva recente.</p>
+              )}
+            </div>
+          )}
+
+          {/* Botões de Ação */}
+          <div className="flex flex-wrap gap-4 justify-center">
+            {perfilCompleto?.tipo?.toLowerCase() === 'motorista' && (!id || id === user?.id) && (
+              <button
+                onClick={() => navigate('/meus-veiculos')}
+                className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 transition-colors"
+              >
+                Ver Meus Veículos
+              </button>
+            )}
+            <button
+              onClick={() => navigate('/')}
+              className="bg-gray-500 text-white px-6 py-3 rounded hover:bg-gray-600 transition-colors"
+            >
+              Voltar ao Início
+            </button>
+            {(!id || id === user?.id) && (
+              <>
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-500 text-white px-6 py-3 rounded hover:bg-red-600 transition-colors"
+                >
+                  Sair
+                </button>
+                <button
+                  onClick={handleDeleteProfile}
+                  className="bg-red-700 text-white px-6 py-3 rounded hover:bg-red-800 transition-colors"
+                >
+                  Deletar Perfil
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Perfil;

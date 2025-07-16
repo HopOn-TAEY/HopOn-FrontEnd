@@ -28,20 +28,35 @@ export const removeAuthToken = (): void => {
 export const authenticatedFetch = async (url: string, options: RequestInit = {}) => {
   const token = getAuthToken();
   
+  console.log('Token encontrado:', token ? 'Sim' : 'Não');
+  console.log('URL da requisição:', `${API_BASE_URL}${url}`);
+
+  // Não enviar Content-Type se for DELETE sem body
+  const isDelete = options.method === 'DELETE';
+  const hasBody = !!options.body;
+  const headers: any = {
+    ...(token && { Authorization: `Bearer ${token}` }),
+    ...options.headers,
+  };
+  if (!(isDelete && !hasBody)) {
+    headers['Content-Type'] = 'application/json';
+  }
+
   const config: RequestInit = {
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...options.headers,
-    },
+    headers,
   };
+
+  console.log('Headers da requisição:', config.headers);
 
   const response = await fetch(`${API_BASE_URL}${url}`, config);
   
+  console.log('Status da resposta:', response.status);
+  
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    console.log('Erro da resposta:', errorData);
+    throw new Error(errorData.message || errorData.error || `HTTP error! status: ${response.status}`);
   }
   
   return response.json();

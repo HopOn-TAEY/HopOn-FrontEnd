@@ -66,7 +66,7 @@ export interface SolicitarCorridaPrivadaData {
 
 // Função para listar todas as corridas
 export const listarCorridas = async (): Promise<Corrida[]> => {
-  const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3333'}/corridas`);
+  const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3333'}/corridas?status=AGENDADA&limit=50`);
   
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));

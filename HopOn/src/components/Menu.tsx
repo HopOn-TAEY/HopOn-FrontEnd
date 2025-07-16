@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import "./../App.css";
 
 function Menu() {
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
 
   return (
     <div className="font-poppins">
@@ -28,18 +30,34 @@ function Menu() {
 
           {/* Botões */}
           <div className="flex space-x-4">
-            <button
-              onClick={() => navigate("/login")}
-              className="px-4 py-2 text-folha border border-folha rounded hover:bg-folha hover:text-white transition"
-            >
-              Entrar
-            </button>
-            <button
-              onClick={() => navigate("/cadastrar")}
-              className="px-4 py-2 text-white border border-folha bg-folha rounded hover:bg-white hover:text-folha transition"
-            >
-              Cadastrar
-            </button>
+            {isAuthenticated ? (
+              <>
+                <span className="px-4 py-2 text-gray-600">
+                  Olá, {user?.nome}
+                </span>
+                <button
+                  onClick={() => navigate("/perfil")}
+                  className="px-4 py-2 text-folha border border-folha rounded hover:bg-folha hover:text-white transition"
+                >
+                  Perfil
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="px-4 py-2 text-folha border border-folha rounded hover:bg-folha hover:text-white transition"
+                >
+                  Entrar
+                </button>
+                <button
+                  onClick={() => navigate("/cadastrar")}
+                  className="px-4 py-2 text-white border border-folha bg-folha rounded hover:bg-white hover:text-folha transition"
+                >
+                  Cadastrar
+                </button>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -59,14 +77,30 @@ function Menu() {
           >
             Como funciona
           </button>
+          {isAuthenticated && user?.tipo === 'motorista' ? (
+            <button
+              onClick={() => navigate("/cadastrarviagem")}
+              className="hover:underline"
+            >
+              Para motoristas
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                if (!isAuthenticated) {
+                  alert("Você precisa estar logado para acessar as funcionalidades de motorista.");
+                  navigate("/login");
+                } else {
+                  alert("Apenas motoristas podem acessar esta funcionalidade.");
+                }
+              }}
+              className="hover:underline opacity-50 cursor-not-allowed"
+            >
+              Para motoristas
+            </button>
+          )}
           <button
-            onClick={() => navigate("/cadastrarviagem")}
-            className="hover:underline"
-          >
-            Para motoristas
-          </button>
-          <button
-            onClick={() => navigate("/solicitaviagem")}
+            onClick={() => navigate("/motoristas")}
             className="hover:underline"
           >
             Para passageiros

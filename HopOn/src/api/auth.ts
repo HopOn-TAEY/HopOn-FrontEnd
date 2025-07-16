@@ -12,7 +12,7 @@ export interface RegisterPassageiroData {
   nasc: string;
   telefone: string;
   senha: string;
-  tipoUsuario: 'passageiro';
+  tipo: 'passageiro';
 }
 
 export interface RegisterMotoristaData {
@@ -21,7 +21,7 @@ export interface RegisterMotoristaData {
   nasc: string;
   telefone: string;
   senha: string;
-  tipoUsuario: 'motorista';
+  tipo: 'motorista';
   cnh: string;
   corridasPrivadas: boolean;
 }
@@ -32,7 +32,8 @@ export interface AuthResponse {
     id: string;
     nome: string;
     email: string;
-    tipoUsuario: 'passageiro' | 'motorista';
+    tipo?: 'passageiro' | 'motorista';
+    tipoUsuario?: 'passageiro' | 'motorista';
   };
 }
 

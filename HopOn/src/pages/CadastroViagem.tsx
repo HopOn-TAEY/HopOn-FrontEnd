@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { criarCorrida } from "../api/corridas";
 import { listarVeiculos } from "../api/usuarios";
 import { useAuth } from "../contexts/AuthContext";
+import { getAuthToken } from "../api/config";
 import "./../App.css";
 
 interface ViagemFormInputs {
@@ -24,7 +25,23 @@ function CadastrarViagem() {
   const [veiculos, setVeiculos] = useState<any[]>([]);
   const [isLoadingVeiculos, setIsLoadingVeiculos] = useState(true);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+
+  // Verificação adicional de segurança
+  const hasToken = !!getAuthToken();
+
+  // Verificação de segurança adicional
+  useEffect(() => {
+    if (!isAuthenticated && !hasToken) {
+      navigate('/login');
+      return;
+    }
+
+    if (user?.tipo !== 'motorista') {
+      navigate('/');
+      return;
+    }
+  }, [isAuthenticated, hasToken, user, navigate]);
 
   const {
     register,
@@ -37,15 +54,6 @@ function CadastrarViagem() {
       setIsLoadingVeiculos(true);
       try {
         const veiculosData = await listarVeiculos();
-        console.log('Veículos carregados:', veiculosData);
-        console.log('Tipo dos veículos:', typeof veiculosData);
-        console.log('É array?', Array.isArray(veiculosData));
-        
-        if (Array.isArray(veiculosData) && veiculosData.length > 0) {
-          console.log('Primeiro veículo:', veiculosData[0]);
-          console.log('ID do primeiro veículo:', veiculosData[0]?.id);
-        }
-        
         setVeiculos(Array.isArray(veiculosData) ? veiculosData : []);
       } catch (error) {
         console.error('Erro ao carregar veículos:', error);
@@ -56,12 +64,32 @@ function CadastrarViagem() {
       }
     };
 
-    if (user?.tipoUsuario === 'motorista') {
+    if (user?.tipo === 'motorista') {
       carregarVeiculos();
     } else {
       setIsLoadingVeiculos(false);
     }
   }, [user]);
+
+  // Se não está autenticado ou não é motorista, não renderiza o formulário
+      if (!isAuthenticated || !hasToken || user?.tipo !== 'motorista') {
+    return (
+      <div className="bg-folha flex justify-center p-6 font-poppins">
+        <div className="m-auto bg-white rounded-md p-[1.5%] w-[45%] text-center">
+          <h1 className="text-center text-4xl font-bold pt-[1%] mb-[2%] mt-5">
+            Acesso Negado
+          </h1>
+          <p className="mb-4">Apenas motoristas logados podem criar corridas.</p>
+          <button
+            onClick={() => navigate('/')}
+            className="bg-folha text-white px-4 py-2 rounded hover:bg-green-700"
+          >
+            Voltar ao Início
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const onSubmit: SubmitHandler<ViagemFormInputs> = async (data) => {
     setIsLoading(true);
@@ -106,25 +134,7 @@ function CadastrarViagem() {
     }
   };
 
-  // Verificar se o usuário é motorista
-  if (!user || user.tipoUsuario !== 'motorista') {
-    return (
-      <div className="bg-folha flex justify-center p-6 font-poppins">
-        <div className="m-auto bg-white rounded-md p-[1.5%] w-[45%] text-center">
-          <h1 className="text-center text-4xl font-bold pt-[1%] mb-[2%] mt-5">
-            Acesso Negado
-          </h1>
-          <p className="mb-4">Apenas motoristas podem criar corridas.</p>
-          <button
-            onClick={() => navigate('/')}
-            className="bg-folha text-white px-4 py-2 rounded hover:bg-green-700"
-          >
-            Voltar ao Início
-          </button>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <div className="bg-folha flex justify-center p-6 font-poppins">

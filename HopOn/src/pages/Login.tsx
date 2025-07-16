@@ -33,8 +33,13 @@ function Login() {
         senha: data.senha,
       });
       
-      // Atualizar o contexto com os dados do usuário
-      loginContext(result.user);
+      console.log('Resultado do login:', result);
+      console.log('Dados do usuário:', result.user);
+      console.log('Tipo do usuário:', result.user.tipo);
+      console.log('TipoUsuario do usuário:', (result.user as any).tipoUsuario);
+      
+      // Atualizar o contexto com os dados do usuário e a opção "lembrar de mim"
+      await loginContext(result.user as any, data.lembrar);
       
       // Redirecionar para a página inicial após login bem-sucedido
       navigate('/home');

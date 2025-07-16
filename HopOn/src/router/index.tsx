@@ -9,6 +9,12 @@ import Pesquisar from "../components/Pesquisa";
 // import Perfil from "../pages/Perfil";
 import Debug from "../pages/Debug";
 import Reserva from "../pages/Reserva";
+import Perfil from "../pages/Perfil";
+import MeusVeiculos from "../pages/MeusVeiculos";
+import Motoristas from "../pages/Motoristas";
+import PerfilMotorista from "../pages/PerfilMotorista";
+import SolicitarCorrida from "../pages/SolicitarCorrida";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
@@ -32,21 +38,41 @@ export const router = createBrowserRouter([
     path: "solicitaviagem",
   },
   {
-    element: <CadastrarViagem />,
+    element: (
+      <ProtectedRoute requiredUserType="motorista">
+        <CadastrarViagem />
+      </ProtectedRoute>
+    ),
     path: "cadastrarviagem",
   },
   {
-    element: <CadastroVeiculo />,
+    element: (
+      <ProtectedRoute requiredUserType="motorista">
+        <CadastroVeiculo />
+      </ProtectedRoute>
+    ),
     path: "cadastrar-veiculo",
   },
   {
     element: <Pesquisar />,
     path: "pesquisa",
   },
-  // {
-  //   element: <Perfil />,
-  //   path: "perfil",
-  // },
+  {
+    element: (
+      <ProtectedRoute>
+        <Perfil />
+      </ProtectedRoute>
+    ),
+    path: "perfil",
+  },
+  {
+    element: (
+      <ProtectedRoute requiredUserType="motorista">
+        <MeusVeiculos />
+      </ProtectedRoute>
+    ),
+    path: "meus-veiculos",
+  },
   {
     element: <Debug />,
     path: "debug",
@@ -54,5 +80,17 @@ export const router = createBrowserRouter([
   {
     element: <Reserva />,
     path: "reserva/:corridaId",
+  },
+  {
+    element: <Motoristas />,
+    path: "motoristas",
+  },
+  {
+    element: <PerfilMotorista />,
+    path: "perfil-motorista/:id",
+  },
+  {
+    element: <SolicitarCorrida />,
+    path: "solicitar-corrida/:id",
   }
 ]);

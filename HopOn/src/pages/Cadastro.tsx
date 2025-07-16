@@ -15,10 +15,11 @@ interface FormValues {
   telefone: string;
   senha: string;
   confirmarSenha: string;
-  tipoUsuario: TipoUsuario;
+  tipo: TipoUsuario;
   cnh?: string;
   corridasPrivadas?: boolean;
   termos: boolean;
+  lembrar: boolean;
 }
 
 function Cadastrar() {
@@ -35,7 +36,7 @@ function Cadastrar() {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const tipoUsuario = watch("tipoUsuario");
+  const tipoUsuario = watch("tipo");
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setIsLoading(true);
@@ -43,14 +44,14 @@ function Cadastrar() {
     
     try {
       let result;
-      if (data.tipoUsuario === "passageiro") {
+      if (data.tipo === "passageiro") {
         result = await registerPassageiro({
           nome: data.nome,
           email: data.email,
           nasc: data.nasc,
           telefone: data.telefone,
           senha: data.senha,
-          tipoUsuario: "passageiro",
+          tipo: "passageiro",
         });
       } else {
         result = await registerMotorista({
@@ -59,17 +60,20 @@ function Cadastrar() {
           nasc: data.nasc,
           telefone: data.telefone,
           senha: data.senha,
-          tipoUsuario: "motorista",
+          tipo: "motorista",
           cnh: data.cnh || "",
           corridasPrivadas: data.corridasPrivadas || false,
         });
       }
       
-      // Atualizar o contexto com os dados do usuário
-      loginContext(result.user);
-      
       console.log('Cadastro bem-sucedido, redirecionando...');
       console.log('Result:', result);
+      console.log('Dados do usuário:', result.user);
+      console.log('Tipo do usuário:', result.user.tipo);
+      console.log('TipoUsuario do usuário:', (result.user as any).tipoUsuario);
+      
+      // Atualizar o contexto com os dados do usuário e a opção "lembrar de mim"
+      loginContext(result.user as any, data.lembrar);
       
       // Redirecionar para a página de debug para testar
       navigate('/debug');
@@ -235,7 +239,7 @@ function Cadastrar() {
             <div className="flex items-center gap-4">
               <label className="flex items-center gap-2">
                 <input
-                  {...register("tipoUsuario", { required: "Escolha o tipo de usuário" })}
+                  {...register("tipo", { required: "Escolha o tipo de usuário" })}
                   type="radio"
                   value="passageiro"
                 />
@@ -243,15 +247,15 @@ function Cadastrar() {
               </label>
               <label className="flex items-center gap-2">
                 <input
-                  {...register("tipoUsuario", { required: "Escolha o tipo de usuário" })}
+                  {...register("tipo", { required: "Escolha o tipo de usuário" })}
                   type="radio"
                   value="motorista"
                 />
                 Motorista
               </label>
             </div>
-            {errors.tipoUsuario && (
-              <p className="text-red-600 text-sm mt-1">{errors.tipoUsuario.message}</p>
+            {errors.tipo && (
+              <p className="text-red-600 text-sm mt-1">{errors.tipo.message}</p>
             )}
           </div>
 
@@ -305,8 +309,21 @@ function Cadastrar() {
             </div>
           )}
 
-          {/* Termos */}
+          {/* Lembrar de mim */}
           <div className="w-[80%] m-auto mb-5 text-left flex items-center mt-[5%]">
+            <input
+              {...register("lembrar")}
+              type="checkbox"
+              id="lembrar"
+              className="mr-2"
+            />
+            <label htmlFor="lembrar" className="text-sm">
+              Lembrar de mim
+            </label>
+          </div>
+
+          {/* Termos */}
+          <div className="w-[80%] m-auto mb-5 text-left flex items-center">
             <input
               {...register("termos", { required: "Aceite os termos é obrigatório" })}
               type="checkbox"

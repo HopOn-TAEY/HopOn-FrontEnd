@@ -1,9 +1,26 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import "./../App.css";
 import Menu from "../components/Menu";
 
 function Home() {
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
+
+  const handleOferecerCarona = () => {
+    if (!isAuthenticated) {
+      alert("Você precisa estar logado para oferecer caronas.");
+      navigate("/login");
+      return;
+    }
+    
+    if (user?.tipo !== 'motorista') {
+      alert("Apenas motoristas podem oferecer caronas.");
+      return;
+    }
+    
+    navigate("/cadastrarviagem");
+  };
 
   return (
     <div>
@@ -25,8 +42,12 @@ function Home() {
             Procurar Carona
           </button>
           <button
-            onClick={() => navigate("/cadastrarviagem")}
-            className="bg-folha text-white rounded-md p-3"
+            onClick={handleOferecerCarona}
+            className={`text-white rounded-md p-3 ${
+              isAuthenticated && user?.tipo === 'motorista' 
+                ? 'bg-folha' 
+                : 'bg-gray-400 cursor-not-allowed'
+            }`}
           >
             Oferecer Carona
           </button>
