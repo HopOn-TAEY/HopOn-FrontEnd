@@ -6,15 +6,25 @@ import Solicitar from "../pages/Solicitar";
 import CadastrarViagem from "../pages/CadastroViagem";
 import CadastroVeiculo from "../pages/CadastroVeiculo";
 import Pesquisar from "../components/Pesquisa";
-// import Perfil from "../pages/Perfil";
+import Perfil from "../pages/Perfil";
 import Debug from "../pages/Debug";
 import Reserva from "../pages/Reserva";
-import Perfil from "../pages/Perfil";
+import Avaliacao from "../pages/Avaliacao";
+import Menu from "../components/Menu";
+import HomeLogin from "../pages/HomeLogin";
+import Filtros from "../pages/Filtro";
 import MeusVeiculos from "../pages/MeusVeiculos";
 import Motoristas from "../pages/Motoristas";
 import PerfilMotorista from "../pages/PerfilMotorista";
 import SolicitarCorrida from "../pages/SolicitarCorrida";
 import ProtectedRoute from "../components/ProtectedRoute";
+import MinhasCorridas from "../pages/MinhasCorridas";
+import CorridaDetalhe from '../pages/CorridaDetalhe';
+import PainelMotorista from '../pages/PainelMotorista';
+import SolicitacoesPrivadasMotorista from '../pages/SolicitacoesPrivadasMotorista';
+import DetalheMinhaCorrida from '../pages/DetalheMinhaCorrida';
+import DetalheMinhaCorridaPrivada from '../pages/DetalheMinhaCorridaPrivada';
+import CorridasFinalizadasUsuario from '../pages/CorridasFinalizadasUsuario';
 
 export const router = createBrowserRouter([
   {
@@ -73,13 +83,33 @@ export const router = createBrowserRouter([
     ),
     path: "meus-veiculos",
   },
+{
+  element: <Perfil />,
+  path: "perfil",
+},
   {
     element: <Debug />,
     path: "debug",
   },
   {
-    element: <Reserva />,
+    element: <Reserva />, 
     path: "reserva/:corridaId",
+  },
+  {
+    element: <Avaliacao />, 
+    path: "avaliar/:id",
+  },
+  {
+    element: <Menu />,
+    path: "menu",
+  },
+  {
+    element: <HomeLogin />,
+    path: "home-login",
+  },
+  {
+    element: <Filtros />,
+    path: "filtros",
   },
   {
     element: <Motoristas />,
@@ -92,5 +122,33 @@ export const router = createBrowserRouter([
   {
     element: <SolicitarCorrida />,
     path: "solicitar-corrida/:id",
-  }
+  },
+  {
+    element: <MinhasCorridas />, 
+    path: "minhas-corridas",
+  },
+  {
+    element: <CorridaDetalhe />,
+    path: "corrida/:id",
+  },
+  {
+    element: <PainelMotorista />,
+    path: "painel-motorista",
+  },
+  {
+    element: <SolicitacoesPrivadasMotorista />,
+    path: "solicitacoes-privadas-motorista",
+  },
+  {
+    element: <DetalheMinhaCorrida />,
+    path: "minhas-corridas/:id",
+  },
+  {
+    element: <DetalheMinhaCorridaPrivada />,
+    path: "minhas-corridas-privadas/:id",
+  },
+  {
+    element: <CorridasFinalizadasUsuario />,
+    path: "corridas-finalizadas-usuario",
+  },
 ]);

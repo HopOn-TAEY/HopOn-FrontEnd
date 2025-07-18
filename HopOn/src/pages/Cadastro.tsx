@@ -85,8 +85,8 @@ function Cadastrar() {
   };
 
   return (
-    <div className="bg-folha flex justify-center p-6 font-poppins">
-      <div className="m-auto bg-white rounded-md p-[1.5%] w-[55%]">
+    <div className="bg-folha flex justify-center p-6 font-poppins min-h-screen">
+      <div className="m-auto bg-white rounded-md p-[1.5%] w-[55%] pb-12">
         <h1 className="text-center text-4xl font-bold pt-[1%] mb-[2%] mt-10">
           Crie sua conta
         </h1>

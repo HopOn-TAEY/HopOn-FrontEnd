@@ -31,6 +31,8 @@ function Motoristas() {
   const [motoristas, setMotoristas] = useState<Motorista[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [busca, setBusca] = useState("");
+  const [termoBusca, setTermoBusca] = useState("");
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
@@ -93,6 +95,8 @@ function Motoristas() {
     navigate(`/solicitar-corrida/${usuarioId}`);
   };
 
+  const motoristasFiltrados = motoristas.filter(m => m.nome.toLowerCase().includes(termoBusca.toLowerCase()));
+
   if (isLoading) {
     return (
       <div className="bg-folha flex justify-center p-6 font-poppins min-h-screen">
@@ -113,19 +117,37 @@ function Motoristas() {
           Encontre motoristas para suas viagens
         </h5>
 
+        <div className="flex justify-center mb-6">
+          <form className="flex w-full max-w-md gap-2" onSubmit={e => { e.preventDefault(); setTermoBusca(busca); }}>
+            <input
+              type="text"
+              placeholder="Pesquisar por nome do motorista..."
+              value={busca}
+              onChange={e => setBusca(e.target.value)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none"
+            />
+            <button
+              type="submit"
+              className="bg-[#648D6E] text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
+            >
+              Buscar
+            </button>
+          </form>
+        </div>
+
         {error && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
             {error}
           </div>
         )}
 
-        {motoristas.length === 0 ? (
+        {motoristasFiltrados.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-gray-600 text-lg">Nenhum motorista encontrado.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {motoristas.map((motorista) => (
+            {motoristasFiltrados.map((motorista) => (
               <div key={motorista.id} className="bg-gray-50 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
                 <div className="text-center mb-4">
                   <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">

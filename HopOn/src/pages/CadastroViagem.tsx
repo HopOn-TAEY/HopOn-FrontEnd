@@ -22,6 +22,7 @@ interface ViagemFormInputs {
 function CadastrarViagem() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [veiculos, setVeiculos] = useState<any[]>([]);
   const [isLoadingVeiculos, setIsLoadingVeiculos] = useState(true);
   const navigate = useNavigate();
@@ -114,6 +115,7 @@ function CadastrarViagem() {
         numeroVagas: parseInt(data.vagas),
         preco: parseFloat(data.preco),
         observacoes: data.observacoes,
+        // eslint-disable-next-line @typescript-eslint/prefer-as-const
         tipo: "PRIVADA" as "PRIVADA", // Corrige o tipo literal
       };
       console.log('Dados enviados para o backend:', corridaData);
@@ -134,6 +136,25 @@ function CadastrarViagem() {
     }
   };
 
+  // Verificar se o usuário é motorista
+  if (!user || user.tipo !== 'motorista') {
+    return (
+      <div className="bg-folha flex justify-center p-6 font-poppins min-h-screen">
+        <div className="m-auto bg-white rounded-md p-[1.5%] w-[45%] text-center">
+          <h1 className="text-center text-4xl font-bold pt-[1%] mb-[2%] mt-5">
+            Acesso Negado
+          </h1>
+          <p className="mb-4">Apenas motoristas podem criar corridas.</p>
+          <button
+            onClick={() => navigate('/')}
+            className="bg-folha text-white px-4 py-2 rounded hover:bg-green-700"
+          >
+            Voltar ao Início
+          </button>
+        </div>
+      </div>
+    );
+  }
 
 
   return (
@@ -325,9 +346,13 @@ function CadastrarViagem() {
         </form>
 
         <div className="text-center mb-1">
-          <a href="#" className="text-sm text-red-800 hover:underline">
+          <button
+            type="button"
+            onClick={() => navigate('/')}
+            className="text-sm text-red-800 hover:underline"
+          >
             Cancelar
-          </a>
+          </button>
         </div>
       </div>
     </div>

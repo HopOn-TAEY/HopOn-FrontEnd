@@ -138,7 +138,7 @@ function PerfilMotorista() {
   }
 
   return (
-    <div className="bg-folha flex justify-center p-6 font-poppins min-h-screen">
+    <div className="min-h-screen bg-[#658761] font-poppins p-6 flex flex-col items-center">
       <div className="m-auto bg-white rounded-md p-[1.5%] w-[70%] max-w-5xl">
         <h1 className="text-center text-4xl font-bold pt-[1%] mb-[2%] mt-10">
           Perfil do Motorista

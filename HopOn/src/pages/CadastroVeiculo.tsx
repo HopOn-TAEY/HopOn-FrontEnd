@@ -117,7 +117,7 @@ function CadastroVeiculo() {
   // Se não está autenticado ou não é motorista, não renderiza o formulário
       if (!isAuthenticated || !hasToken || user?.tipo !== 'motorista') {
     return (
-      <div className="bg-folha flex justify-center p-6 font-poppins">
+      <div className="bg-folha min-h-screen flex justify-center p-6 font-poppins">
         <div className="m-auto bg-white rounded-md p-[1.5%] w-[45%] text-center">
           <h1 className="text-center text-4xl font-bold pt-[1%] mb-[2%] mt-5">
             Acesso Negado
@@ -418,7 +418,7 @@ function CadastroVeiculo() {
 
         <div className="text-center mt-[3%] mb-1">
           <button
-            onClick={() => navigate('/cadastrarviagem')}
+            onClick={() => navigate('/')}
             className="text-sm text-red-800 hover:underline"
           >
             Cancelar

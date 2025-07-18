@@ -17,6 +17,8 @@ interface UsuarioCompleto {
   dataNasc?: string;
   perfilMotorista?: {
     cnh: string;
+    avaliacaoMedia?: number;
+    totalAvaliacoes?: number;
     veiculos: { id: string; marca: string; modelo: string; placa: string }[];
   };
   perfilPassageiro?: {
@@ -244,7 +246,7 @@ function Perfil() {
           {perfilCompleto?.tipo?.toLowerCase() === 'motorista' && perfilCompleto.perfilMotorista && (
             <div className="bg-gray-50 rounded-lg p-6">
               <h2 className="text-2xl font-semibold mb-4 text-gray-800">Informações de Motorista</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="text-sm font-semibold text-gray-600">CNH</label>
                   <p className="p-3 border border-gray-300 rounded-md bg-white">
@@ -255,6 +257,15 @@ function Perfil() {
                   <label className="text-sm font-semibold text-gray-600">Total de Veículos</label>
                   <p className="p-3 border border-gray-300 rounded-md bg-white">
                     {perfilCompleto.perfilMotorista.veiculos ? perfilCompleto.perfilMotorista.veiculos.length : 0}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-gray-600">Avaliação Média</label>
+                  <p className="p-3 border border-gray-300 rounded-md bg-white">
+                    {perfilCompleto.perfilMotorista.avaliacaoMedia !== undefined && perfilCompleto.perfilMotorista.avaliacaoMedia !== null
+                      ? `${perfilCompleto.perfilMotorista.avaliacaoMedia.toFixed(1)} ⭐ (${perfilCompleto.perfilMotorista.totalAvaliacoes || 0} avaliações)`
+                      : 'Nenhuma avaliação ainda'
+                    }
                   </p>
                 </div>
               </div>

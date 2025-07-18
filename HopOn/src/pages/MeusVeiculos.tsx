@@ -244,20 +244,7 @@ function MeusVeiculos() {
                     </div>
                   </div>
 
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => navigate(`/editar-veiculo/${veiculo.id}`)}
-                      className="flex-1 bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => navigate('/cadastrarviagem')}
-                      className="flex-1 bg-folha text-white px-3 py-2 rounded text-sm hover:bg-green-700"
-                    >
-                      Oferecer Carona
-                    </button>
-                  </div>
+                  {/* Remover os botões Editar e Oferecer Carona */}
                 </div>
               );
             })}
