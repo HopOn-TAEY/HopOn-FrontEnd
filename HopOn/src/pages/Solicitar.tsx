@@ -32,7 +32,7 @@ function Solicitar() {
       });
       alert("Solicitação enviada com sucesso!");
       reset();
-    } catch (error) {
+    } catch {
       alert("Erro ao solicitar corrida privada.");
     }
   };

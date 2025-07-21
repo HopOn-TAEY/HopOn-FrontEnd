@@ -30,7 +30,7 @@ function HomeLogin() {
         </div>
       </div>
 
-      {/* Seção com sugestões rápidas */}
+      {/* Sugestões rápidas */}
       <div className="bg-gray-100 py-16 px-6 text-center">
         <h2 className="text-3xl font-semibold mb-10">Sugestões para você</h2>
         <div className="flex flex-wrap justify-center gap-8">
@@ -52,7 +52,51 @@ function HomeLogin() {
         </div>
       </div>
 
-      {/* Rodapé */}
+      {/* Benefícios da plataforma */}
+      <div className="py-16 px-6 bg-folha text-center">
+        <h2 className="text-3xl font-semibold mb-10 text-white">Por que usar nossa plataforma?</h2>
+        <div className="flex flex-wrap justify-center gap-10">
+          <Benefit
+            titulo="Econômico"
+            texto="Compartilhe custos e economize em cada viagem."
+          />
+          <Benefit
+            titulo="Sustentável"
+            texto="Reduza a emissão de CO₂ ajudando o meio ambiente."
+          />
+          <Benefit
+            titulo="Confiável"
+            texto="Avaliações ajudam a manter a comunidade segura."
+          />
+        </div>
+      </div>
+
+      {/* Depoimentos de usuários */}
+      <div className="bg-gray-100 py-16 px-6 text-center">
+        <h2 className="text-3xl font-semibold mb-10">O que dizem nossos usuários</h2>
+        <div className="flex flex-wrap justify-center gap-8">
+          <Testimonial nome="Ana" texto="Sempre encontro caronas confiáveis! O app mudou minha rotina." />
+          <Testimonial nome="Carlos" texto="É prático, seguro e muito econômico. Recomendo demais!" />
+          <Testimonial nome="Larissa" texto="Uso quase toda semana. Já conheci pessoas incríveis por aqui!" />
+        </div>
+      </div>
+
+      {/* Seção: Perfil completo com novo background */}
+      <div className="py-16 px-6 bg-white text-center">
+        <h2 className="text-3xl font-bold text-folha mb-4">Seu perfil é seu cartão de visita</h2>
+        <p className="mb-6 text-lg max-w-xl mx-auto text-gray-700">
+          Motoristas e passageiros confiam mais em quem tem um perfil completo. Adicione foto, informações e receba mais solicitações!
+        </p>
+        <div className="flex justify-center">
+          <button
+            onClick={() => navigate("/perfil")}
+            className="bg-folha text-white px-6 py-3 rounded-md font-semibold hover:bg-green-700 transition"
+          >
+            Completar meu perfil agora
+          </button>
+        </div>
+      </div>
+
       <Footer />
     </div>
   );
@@ -67,6 +111,26 @@ function Card({ titulo, texto, onClick }: { titulo: string; texto: string; onCli
     >
       <h3 className="text-xl font-semibold mb-2 text-folha">{titulo}</h3>
       <p className="text-sm text-gray-600">{texto}</p>
+    </div>
+  );
+}
+
+// Componente de benefício
+function Benefit({ titulo, texto }: { titulo: string; texto: string }) {
+  return (
+    <div className="w-64 bg-gray-50 rounded-xl p-6 shadow-md">
+      <h3 className="text-xl font-semibold mb-2 text-folha">{titulo}</h3>
+      <p className="text-sm text-gray-700">{texto}</p>
+    </div>
+  );
+}
+
+// Componente de depoimento
+function Testimonial({ nome, texto }: { nome: string; texto: string }) {
+  return (
+    <div className="w-72 bg-white p-6 rounded-xl shadow-md">
+      <p className="text-sm text-gray-600 mb-4">“{texto}”</p>
+      <p className="font-semibold text-folha">— {nome}</p>
     </div>
   );
 }

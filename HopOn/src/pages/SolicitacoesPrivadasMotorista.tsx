@@ -66,7 +66,7 @@ function SolicitacoesPrivadasMotorista() {
                 <div><strong>Observações:</strong> {sol.observacoes || "-"}</div>
               </div>
               <div className="flex flex-col gap-2 min-w-[220px]">
-                <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors" onClick={() => handleAceitar(sol.id)}>
+                <button className="bg-folha text-white px-4 py-2 rounded hover:bg-green-700 transition-colors" onClick={() => handleAceitar(sol.id)}>
                   Aceitar
                 </button>
                 <button className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors" onClick={() => handleRecusar(sol.id)}>

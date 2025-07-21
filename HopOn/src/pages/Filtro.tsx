@@ -137,7 +137,7 @@ function Filtros() {
   };
 
   return (
-    <div className="min-h-screen bg-[#658761] font-poppins p-6">
+    <div className="min-h-screen bg-folha font-poppins p-6">
       <button
         className="mb-4 bg-green-400 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
         onClick={() => navigate("/")}

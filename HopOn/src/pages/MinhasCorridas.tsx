@@ -162,10 +162,10 @@ function MinhasCorridas() {
                   <div><strong>Data:</strong> {priv.dataHoraSaida ? new Date(priv.dataHoraSaida).toLocaleString() : ""}</div>
                 </div>
                 <div className="flex flex-col gap-2 min-w-[220px]">
-                  <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors" onClick={() => navigate(`/minhas-corridas-privadas/${priv.id}`)}>
+                  <button className="bg-folha text-white px-4 py-2 rounded hover:bg-green-700 transition-colors" onClick={() => navigate(`/minhas-corridas-privadas/${priv.id}`)}>
                     Ver detalhes
                   </button>
-                  <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors" onClick={() => handleFinalizarCorrida(priv.id)}>
+                  <button className="bg-folha text-white px-4 py-2 rounded hover:bg-green-700 transition-colors" onClick={() => handleFinalizarCorrida(priv.id)}>
                     Finalizar
                   </button>
                   <button className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors" onClick={() => handleCancelarCorrida(priv.id)}>

@@ -89,7 +89,7 @@ function CadastrarViagem() {
   // Verificar se o usuário é motorista
   if (!user || user.tipoUsuario !== 'motorista') {
     return (
-      <div className="bg-folha flex justify-center p-6 font-poppins">
+      <div className="bg-folha flex justify-center p-6 font-poppins min-h-screen">
         <div className="m-auto bg-white rounded-md p-[1.5%] w-[45%] text-center">
           <h1 className="text-center text-4xl font-bold pt-[1%] mb-[2%] mt-5">
             Acesso Negado

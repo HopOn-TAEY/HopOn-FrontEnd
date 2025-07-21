@@ -40,7 +40,7 @@ function CorridaDetalhe() {
   };
 
   return (
-    <div className="min-h-screen bg-[#658761] font-poppins p-6 flex flex-col items-center">
+    <div className="min-h-screen bg-folha font-poppins p-6 flex flex-col items-center">
       <div className="max-w-2xl w-full bg-white rounded-lg shadow p-6 mt-8">
         <button className="mb-4 text-folha hover:underline" onClick={() => navigate(-1)}>&larr; Voltar</button>
         {loading && <div>Carregando detalhes...</div>}
