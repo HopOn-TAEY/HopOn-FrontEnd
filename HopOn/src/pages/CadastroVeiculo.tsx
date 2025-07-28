@@ -77,7 +77,7 @@ function CadastroVeiculo() {
         <h1 className="text-center text-4xl font-bold pt-[1%] mb-[2%] mt-10">
           Cadastre seu veículo
         </h1>
-        <h5 className="mb-[2%] text-center">Adicione informações sobre seu veículo</h5>
+        <h5 className="mb-[2%] text-center">Adicione informações sobre o veículo</h5>
 
         {error && (
           <div className="w-[80%] m-auto mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
